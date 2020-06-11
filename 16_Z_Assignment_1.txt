@@ -1,0 +1,134 @@
+Your supermarket company has a simple web service built on nginx that serves a static list of fresh fruit available in their stores. They want to run this service as a Docker container in their new swarm environment, but first they need you to build a Docker image for this service.
+
+On this repo (https://github.com/satyensingh/full-docker-training-16-Z-Assignment1.git), you will find the files needed to create the image. Create a Dockerfile to define the image according to the provided specifications, then test the image by running a container in detached mode and verifying that you can access the fresh fruit data from the application.
+
+The image should meet the following specifications:
+
+1. Use nginx tag 1.15.8 as the base image.
+2. Add the static fresh fruit data to the image so that it will be served by the nginx server. The data file is located on the server at static/fruit.json under the project directory. Add this file to the image at the location /usr/share/nginx/html/fruit.json.
+3. Add the nginx configuration file. This file is located on the server in the project directory and is called nginx.conf. Add this file to the image at /etc/nginx/nginx.conf.
+4. The image should expose port 80.
+5. Use the following as the default command: nginx -g daemon off;.
+6. Build the image with the tag fruit-list:1.0.0
+
+Once you have built the image you should be able to test it by running it as a container:
+
+docker run --name fruit-list -d -p 8080:80 fruit-list:1.0.0
+
+
+Verify that the container serves the required data by making a request to it on port 8080. If everything is set up correctly, you should get a JSON list of fruits.
+
+curl localhost:8080
+
+
+Answer -->
+
+git clone https://github.com/satyensingh/full-docker-training-16-Z-Assignment1.git
+
+cd full-docker-training-16-Z-Assignment1
+
+created Dockerfile with following content
+
+FROM nginx:1.15.8
+ADD static/fruit.json /usr/share/nginx/html/
+ADD nginx.conf /etc/nginx/
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+
+Image created -->
+docker build -t fruit-list:1.0.0 .
+
+Ran the Docker container -->
+docker run --name fruit-list -d -p 8080:80 fruit-list:1.0.0
+
+then otput validated with command -->
+curl localhost:8080
+
+{
+  "description": "A list of fruits.",
+  "fruits": [
+    "apple",
+    "apricot",
+    "avocado",
+    "banana",
+    "bell pepper",
+    "bilberry",
+    "blackberry",
+    "blackcurrant",
+    "blood orange",
+    "blueberry",
+    "boysenberry",
+    "breadfruit",
+    "canary melon",
+    "cantaloupe",
+    "cherimoya",
+    "cherry",
+    "chili pepper",
+    "clementine",
+    "cloudberry",
+    "coconut",
+    "cranberry",
+    "cucumber",
+    "currant",
+    "damson",
+    "date",
+    "dragonfruit",
+    "durian",
+    "eggplant",
+    "elderberry",
+    "feijoa",
+    "fig",
+    "goji berry",
+    "gooseberry",
+    "grape",
+    "grapefruit",
+    "guava",
+    "honeydew",
+    "huckleberry",
+    "jackfruit",
+    "jambul",
+    "jujube",
+    "kiwi fruit",
+    "kumquat",
+    "lemon",
+    "lime",
+    "loquat",
+    "lychee",
+    "mandarine",
+    "mango",
+    "mulberry",
+    "nectarine",
+    "nut",
+    "olive",
+    "orange",
+    "pamelo",
+    "papaya",
+    "passionfruit",
+    "peach",
+    "pear",
+    "persimmon",
+    "physalis",
+    "pineapple",
+    "plum",
+    "pomegranate",
+    "pomelo",
+    "purple mangosteen",
+    "quince",
+    "raisin",
+    "rambutan",
+    "raspberry",
+    "redcurrant",
+    "rock melon",
+    "salal berry",
+    "satsuma",
+    "star fruit",
+    "strawberry",
+    "tamarillo",
+    "tangerine",
+    "tomato",
+    "ugli fruit",
+    "watermelon"
+  ]
+}
+
+

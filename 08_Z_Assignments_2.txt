@@ -1,0 +1,17 @@
+Your company is ready to move forward with using Docker to run their applications. However, they have some complex container apps that can take advantage of the cluster management and orchestration features of Docker swarm. You have been asked to stand up a simple Docker swarm cluster to be used for some initial testing. A set of servers has already been provisioned for this purpose. The swarm cluster should meet the following criteria:
+
+One Swarm manager.
+Two worker nodes.
+All nodes should use Docker CE version 5:18.09.5~3-0~ubuntu-bionic.
+Both worker nodes should be joined to the cluster.
+Any non-root user should be able to run docker commands on all three servers.
+
+Answers -->
+docker swarm init
+ To join this node run following command on worker node-->
+   docker swarm join --token SWMTKN-1-3wmojxknfrchhjtjhp995athq270icun4kgaaux0ceadodpdmu-2v69y825kajf9e28j5rjlhfn0 172.31.71.0:2377
+To check joined nodes -->
+docker node ls
+For access to non-root users -->
+sudo usermod -aG docker ubuntu
+

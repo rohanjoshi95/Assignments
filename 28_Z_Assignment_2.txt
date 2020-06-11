@@ -1,0 +1,25 @@
+Your team wants to run an nginx service in a Docker Swarm cluster with multiple replicas, but they want to run these containers with a customized nginx configuration file. The same file can be used for all replicas, and the team wants to store this file externally in a central location so that the nginx configuration can be changed without the need to re-create containers.
+
+Your task is to create a shared storage volume housed on an external storage server. This volume should be accessible to all containers in the cluster regardless of which node they are running on. This volume will contain the nginx configuration file and will be mounted to each of the service's replica containers.
+
+
+Configure the swarm so that it meets the following criteria:
+
+1. Create a shared storage directory at /etc/docker/storage on the external storage server. Make sure cloud_user can read and write to this directory.
+2. Place the nginx config file at /etc/docker/storage/nginx.conf. You can find a copy of this file on the external storage server at /home/cloud_user/nginx.conf.
+3. Install the vieux/sshfs docker plugin on the swarm cluster.
+4. Create a service called nginx-web using the nginx:latest image with 3 replicas. Mount the shared volume to the service's containers at /etc/nginx/. Publish port 9773 on the service containers to port 8080 on the swarm nodes.
+5. Create a Docker volume called nginx-config-vol using the vieux/sshfs driver that stores data in /etc/docker/storage on the external storage server. You can use the cloud_user credentials to do this. Note that you should create the volume as part of the docker service create command so that the volume will be configured automatically on all swarm nodes that execute the service's tasks.
+
+
+Answers-->
+
+sudo mkdir /etc/docker/storage
+touch /etc/docker/storage/nginx.conf
+docker plugin install vieux/sshfs
+docker volume create --driver vieux/sshfs -o sshcmd=ubuntu@ec2-18-234-130-191.compute-1.amazonaws.com:/etc/docker/storage -o password=mypass nginx-config-vol
+docker service create --name nginx-web --replicas 3 --mount type=volume,source=nginx-config-vol,destination=/etc/nginx/ --publish 9773:8080 nginx:latest
+
+
+
+
