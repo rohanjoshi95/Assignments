@@ -1,0 +1,21 @@
+Your fruit stand company has a Docker server set up to run three application components. There is a base-price component which serves a list of the base prices for the products sold at the fruit stand. There is also a sales component which provides a list of products that are on sale and their discount percentages. Finally, there is a total-price component that queries data from the other two services and calculates the total price for each item, including the discounts from sales.
+
+You have been asked to configure these three components by running containers on the Docker server. They need to communicate with each other using their own bridge network, which you will also need to create. A Docker server has been made available for you to use.
+
+Configure these application components on the Docker server so that the following specifications are met:
+
+1. Create a bridge network called prices-net.
+2. Run a container called base-price with the linuxacademycontent/prices-base-price:1 image. Configure this container to use the prices-net network.
+3. Run a container called sales with the linuxacademycontent/prices-sales:1 image. Configure this container to use the prices-net network.
+4. Run a container called total-price with the linuxacademycontent/prices-total-price:1 image. Configure this container to use the prices-net network. Publish this container's port 80 to port 8080 on the host.
+
+If everything is set up correctly, you should be able to access the total prices list with curl localhost:8080.
+
+
+Answers-->
+
+docker network create prices-net --driver bridge
+docker run --name base-price --network prices-net -d linuxacademycontent/prices-base-price:1
+docker run --name sales --network prices-net -d linuxacademycontent/prices-sales:1
+docker run --name total-price --network prices-net -d -p 80:8080 linuxacademycontent/prices-total-price:1
+
