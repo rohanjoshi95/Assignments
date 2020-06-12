@@ -1,0 +1,69 @@
+Your fruit stand company has some software that calculates and serves a list of products and their prices, taking into account items that are on sale and how the sales affect the total price. This software consists of three components: a base-price component which serves the base prices of fruits sold by the fruit stand, a sales component which provides a list of items that are on sale and how much each item is discounted, and a total-price component which communicates with the other two and calculates the final price for each item.
+
+These components have been running on a single Docker host, but as your business is expanding, it is time to upgrade to a swarm cluster for greater flexibility. Run these three application components as services in your swarm cluster, and provide them with a custom overlay network to facilitate isolated communication between them.
+
+Configure these application components on the Swarm cluster so that the following specifications are met:
+
+1. Create an overlay network called prices-overlay-net.
+2. Create a service called base-price with 3 replicas using the linuxacademycontent/prices-base-price:1 image. Configure the service to use the prices-overlay-net network.
+3. Create a service called sales with 3 replicas using the linuxacademycontent/prices-sales:1 image. Configure the service to use the prices-overlay-net network.
+4. Create a service called total-price with 2 replicas using the linuxacademycontent/prices-total-price:1 image. Configure the service to use the prices-overlay-net network. Expose this service's port 80 on port 8080.
+
+If everything is set up correctly, you should be able to access the total prices list with:
+curl localhost:8080.
+
+Answers-->
+docker network create prices-net --driver bridge
+docker run --name base-price --network prices-net -d linuxacademycontent/prices-base-price:1
+docker run --name sales --network prices-net -d linuxacademycontent/prices-sales:1
+docker run --name total-price --network prices-net -d -p 8080:80 linuxacademycontent/prices-total-price:1
+curl localhost:8080
+{
+    "description": "A list of total prices, including discounts.",
+    "products": [
+        {
+            "name": "apple",
+            "price": "0.98"
+        },
+        {
+            "name": "banana",
+            "price": "1.00"
+        },
+        {
+            "name": "blueberry",
+            "price": "3.99"
+        },
+        {
+            "name": "coconut",
+            "price": "4.99"
+        },
+        {
+            "name": "cranberry",
+            "price": "2.09"
+        },
+        {
+            "name": "cucumber",
+            "price": "0.50"
+        },
+        {
+            "name": "currant",
+            "price": "2.00"
+        },
+        {
+            "name": "olive",
+            "price": "2.50"
+        },
+        {
+            "name": "orange",
+            "price": "1.31"
+        },
+        {
+            "name": "pamelo",
+            "price": "3.00"
+        },
+        {
+            "name": "papaya",
+            "price": "4.75"
+        }
+    ]
+}
