@@ -1,0 +1,64 @@
+Problem Statement:-
+
+Our pizza restaurant is working on a new web application designed to run in a Kubernetes cluster. The development team has designed a web service which serves a list of pizza toppings. The team has provided a set of specifications which the pizza topping web service needs in order to run.
+
+We have been asked to create a deployment that meets the app's specifications. Then, we need to expose the application using a NodePort service. This setup should meet the following criteria:
+
+1. All objects should be in the <your-name>-pizza namespace. This namespace already exists in the cluster.
+2. The deployment should be named pizza-deployment.
+3. The deployment should have 3 replicas.
+4. The deployment's pods should have one container using the linuxacademycontent/pizza-service image with the tag 1.14.6.
+5. Run the container with the command nginx.
+6. Run the container with the arguments "-g", "daemon off;".
+7. The pods should expose port 80 to the cluster.
+8. The pods should be configured to periodically check the /healthz endpoint on port 8081, and restart automatically if the request fails.
+9. The pods should not receive traffic from the service until the / endpoint on port 80 responds successfully.
+10. The service should be named pizza-service.
+11. The service should forward traffic to port 80 on the pods.
+12. The service should be exposed externally by listening on port 30080 on each node.
+
+Answers-->>
+
+kubectl create -f pizza-deployment.yml
+
+>kubectl get deployments -n rohan-pizza
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+pizza-deployment   3/3     3            3           60s
+
+>kubectl get svc -n rohan-pizza
+NAME            TYPE       CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
+pizza-service   NodePort   10.97.18.38   <none>        80:30080/TCP   52s
+
+
+curl localhost:30080
+
+{
+  "description": "A list of pizza toppings.",
+  "pizzaToppings": [
+    "anchovies",
+    "artichoke",
+    "bacon",
+    "breakfast bacon",
+    "Canadian bacon",
+    "cheese",
+    "chicken",
+    "chili peppers",
+    "feta",
+    "garlic",
+    "green peppers",
+    "grilled onions",
+    "ground beef",
+    "ham",
+    "hot sauce",
+    "meatballs",
+    "mushrooms",
+    "olives",
+    "onions",
+    "pepperoni",
+    "pineapple",
+    "sausage",
+    "spinach",
+    "sun-dried tomato",
+    "tomatoes"
+  ]
+}
