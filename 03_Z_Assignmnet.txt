@@ -16,26 +16,90 @@ Once the pod is created, you should be able to find it with kubectl get pods -n 
 
 Answers-->
 
+kubectl create namespace web
+
 apiVersion: v1
 kind: Pod
 metadata:
-  name: myapp-pod
+  name: web-pod
   labels:
-    app: myapp
+    app: web
+  namespace: web
 spec:
   containers:
-    - name: nginx-container
-      image: nginx
+    - name: nginx-web
+      image: nginx:latest
       ports:
         - containerPort: 80
       command:
         - nginx
       args:
-        - -g daemon off;
+        - -g
+        - "daemon off;"
+        - -q
 		
-kubectl create namespace web
-kubectl create -f pod-definition.yml --namespace web
+
+kubectl create -f pod-definition.yml
 kubectl get pods -n web
 
-NAME        READY   STATUS    RESTARTS   AGE
-myapp-pod   1/1     Running   0          102s
+kubectl get pod web-pod -n web
+NAME      READY   STATUS    RESTARTS   AGE
+web-pod   1/1     Running   0          23s
+
+
+>kubectl describe pod web-pod -n web
+
+Name:         web-pod
+Namespace:    web
+Priority:     0
+Node:         minikube/192.168.99.100
+Start Time:   Thu, 18 Jun 2020 10:53:52 -0700
+Labels:       app=web
+Annotations:  <none>
+Status:       Running
+IP:           172.17.0.16
+IPs:
+  IP:  172.17.0.16
+Containers:
+  nginx-web:
+    Container ID:  docker://c77f909e80843d31adca702be933b64684c3a0321d49951fba52a1d081dbab08
+    Image:         nginx:latest
+    Image ID:      docker-pullable://nginx@sha256:21f32f6c08406306d822a0e6e8b7dc81f53f336570e852e25fbe1e3e3d0d0133
+    Port:          80/TCP
+    Host Port:     0/TCP
+    Command:
+      nginx
+    Args:
+      -g
+      daemon off;
+      -q
+    State:          Running
+      Started:      Thu, 18 Jun 2020 10:53:58 -0700
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-l4zb8 (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  default-token-l4zb8:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-l4zb8
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s
+                 node.kubernetes.io/unreachable:NoExecute for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  39s   default-scheduler  Successfully assigned web/web-pod to minikube
+  Normal  Pulling    38s   kubelet, minikube  Pulling image "nginx:latest"
+  Normal  Pulled     33s   kubelet, minikube  Successfully pulled image "nginx:latest"
+  Normal  Created    33s   kubelet, minikube  Created container nginx-web
+  Normal  Started    33s   kubelet, minikube  Started container nginx-web
