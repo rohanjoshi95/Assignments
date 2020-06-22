@@ -1,0 +1,70 @@
+Learning Objectives:-
+1. Create the User Accounts as mentioned below:-
+
+-------------------------------------------------------------------------------------------------------------
+userlist
+-------------------------------------------------------------------------------------------------------------
+# Please create the the below users on all hosts in dbsystems
+# You will find a pregenerated key pair and an authorized key file for each user in /home/ansible/keys
+
+# User accounts to create:
+consultant
+supervisor
+-------------------------------------------------------------------------------------------------------------
+
+2. Place Key Files in the Correct Location, `/home/$USER/.ssh/authorized_keys`, on Hosts in `dbsystems`
+3. Ensure `auditd` Is Enabled and Running on All Hosts
+
+
+Additional Information:-
+Some consultants have been employed to perform audits on a number of systems in your company's environment. You must create the user accounts noted in the baove userlist and set up the provided public keys for their accounts. The security team has built a jump host for the consultants to access production systems and provided the full key-pair to you so you may set up and test the connection. All hosts in dbsystems will need the provided public key installed so the consultants may use key-pair authentication to access the systems. Also, you must ensure the auditd service is enabled and running on all systems.
+
+To summarize, you must do the following:-
+
+Create the user accounts noted in userlist.
+Copy the authorized_keys file for each user to the correct location so the new accounts can log in with ssh key authentication.
+Ensure auditd is enabled and running on all systems.
+
+
+
+Important notes:-
+Ansible must be installed and configured on the control node. If you connect to the server by clicking on the Public IP address in your browser, make sure to change to the ansible user with the su - ansible command.
+The user ansible must also be present on all servers with appropriate shared keys for access to managed servers from the control node. Make sure to use this user to complete the commands.
+The default Ansible inventory must be configured with the appropriate hosts and groups.
+/etc/hosts entries must be present on control1 for the managed servers.
+
+
+
+
+Answers -->>
+
+
+1. To create users in all hosts --
+
+useradd -m -s /bin/bash consultant
+passwd consultant
+
+useradd -m -s /bin/bash supervisor
+passwd supervisor
+
+2. Cpoy ssh key to hosts --
+
+ssh-copy-id -i /home/ansible/.ssh/id_rsa.pub consultant@13.127.14.159
+ssh-copy-id -i /home/ansible/.ssh/id_rsa.pub supervisor@13.127.14.159
+
+ssh-copy-id -i /home/ansible/.ssh/id_rsa.pub consultant@35.154.234.44
+ssh-copy-id -i /home/ansible/.ssh/id_rsa.pub supervisor@35.154.234.44
+
+3. To check auditd is running 
+
+consultant@dest-host:~$ systemctl status auditd
+● auditd.service - Security Auditing Service
+   Loaded: loaded (/lib/systemd/system/auditd.service; enabled; vendor preset: enabled)
+   Active: active (running) since Mon 2020-06-22 17:20:21 UTC; 23min ago
+     Docs: man:auditd(8)
+           https://github.com/linux-audit/audit-documentation
+ Main PID: 503 (auditd)
+    Tasks: 2 (limit: 1152)
+   CGroup: /system.slice/auditd.service
+           └─503 /sbin/auditd
+

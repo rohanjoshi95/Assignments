@@ -1,0 +1,61 @@
+Your company has been increasing the deployment of small broacher-style websites for clients. The head of IT has decided that each client should have their own web servers for better client isolation and has tasked you with creating concept automation to quickly deploy web-nodes with simple static website content.
+
+You must configure ansible control node and 2 test lab servers (node1 and node2) with the ansible user and key.
+
+You must create an ansible inventory in /home/ansible/inventory containing a host group named web. The web group should contain node1 and node2.
+
+Furthermore, you must design an Ansible playbook that will execute the following tasks on your configured inventory: install httpd, start and enable the httpd service, and install a simple website provided on a repo server. Create the playbook in /home/ansible/web.yml. The simple website may be accessed from http://repo.example.com/website.tgz.
+
+Summary tasks list:
+
+1. Create an inventory in /home/ansible/inventory containing a host group named web. The web group should contain node1 and node2.
+2. Create a playbook in /home/ansible/web.yml.
+3. Configure the playbook to install httpd on the web group.
+4. Configure the playbook to start and enable the httpd service on the web group.
+5. Configure the playbook to retrieve the website from http://repo.example.com/website.tgz on each server in the web group.
+6. Configure the playbook to unarchive the website into /var/www/html on all servers in the web group.
+7. Execute the playbook you created using the inventory you created to verify your work.
+
+
+Answers -->>
+
+-
+  name: Install a simple website provided on a repo server
+  become: true
+  hosts: Web
+  tasks:
+    - name: Ping test
+      ping:
+
+    - name: Install httpd
+      apt:
+        name: apache2
+        state: latest
+        update_cache: yes
+    - name: Start apache2
+      service: name=apache2 state=started
+    - name: Retriving the website
+      get_url: url=http://repo.example.com/website.tgz dest=/var/www/html
+
+$ ansible-playbook web.yml -i inventory.txt
+
+PLAY [Install a simple website provided on a repo server] ***************************************************************************************************
+
+TASK [Gathering Facts] **************************************************************************************************************************************
+ok: [35.154.234.44]
+
+TASK [Ping test] ********************************************************************************************************************************************
+ok: [35.154.234.44]
+
+TASK [Install httpd] ****************************************************************************************************************************************
+ok: [35.154.234.44]
+
+TASK [Start apache2] ****************************************************************************************************************************************
+ok: [35.154.234.44]
+
+TASK [retriving the website] ********************************************************************************************************************************
+fatal: [35.154.234.44]: FAILED! => {"changed": false, "dest": "/var/www/html", "elapsed": 0, "gid": 0, "group": "root", "mode": "0755", "msg": "Request failed: <urlopen error [Errno -2] Name or service not known>", "owner": "root", "size": 4096, "state": "directory", "uid": 0, "url": "http://repo.example.com/website.tgz"}
+
+PLAY RECAP **************************************************************************************************************************************************
+35.154.234.44              : ok=4    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0
+

@@ -1,0 +1,19 @@
+-
+  name: Install a simple website provided on a repo server
+  become: true
+  hosts: Web
+  tasks:
+    - name: Ping test
+      ping:
+
+    - name: Install httpd
+      apt:
+        name: apache2
+        state: latest
+        update_cache: yes
+    - name: Start apache2
+      service: name=apache2 state=started
+    - name: retriving the website
+      get_url:
+        url: http://repo.example.com/website.tgz
+        dest: /var/www/html

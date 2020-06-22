@@ -1,0 +1,52 @@
+Learning Objectives:-
+Install Ansible on the control node.
+Configure the `ansible` user on the control node for ssh shared key access to managed nodes. Do not use a passphrase for the key pair.
+Create a simple Ansible inventory on the control node in `/home/ansible/inventory` containing `node1` and `node2`.
+Configure sudo access for Ansible on `node1` and `node2` such that Ansible may use sudo for any command with no password prompt.
+Verify each managed node is able to be accessed by Ansible from the control node using the `ping` module. Redirect the output of a successful command to `/home/ansible/output`.
+
+
+Additional Information:-
+Your CIO has greenlit a proof of concept for Ansible in your environment. You are to set up an Ansible control node in a test environment and verify basic functionality. You have three demo hosts, one to be the control node (control1), and two to serve as managed nodes (node1 and node2). You must complete the following steps:
+
+1. Install Ansible on the control node.
+2. Configure the ansible user on the control node for ssh shared key access to managed nodes.
+	Note: do not use a passphrase for the key pair.
+3. Create a simple Ansible inventory on the control node in /home/ansible/inventory containing node1 and node2.
+4. Configure sudo access for Ansible on node1 and node2 so that Ansible may use sudo for any command with no password prompt.
+5. Verify each managed node can be accessed by Ansible from the control node using the ping module. Redirect the output of a successful command to /home/ansible/output.
+
+Important Notes:
+You might have to create user "ansible" on all servers.
+The ansible user has the same password as the cloud_user.
+/etc/hosts entries must be present on control1 for the managed nodes.
+
+
+Answers -->>
+
+$ cat inventory.txt
+[workstationhosts]
+35.154.234.44
+13.127.14.159 ansible_user=ansible
+
+$ ansible all -m ping -i inventory.txt > /home/ansible/output
+
+$ vi output
+
+13.127.14.159 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+35.154.234.44 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+
+
+

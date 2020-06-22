@@ -1,0 +1,25 @@
+-
+  name: Automation to pull down a data file
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: File Downloading
+      block:
+       - git:
+           repo: https://github.com/satyensingh/ansible-assignments-scripts.git
+           dest: /home/ubuntu/ansible-assignments-scripts
+       - debug: msg="File downloaded"
+       - replace:
+           path: /home/ubuntu/ansible-assignments-scripts/change_l33t.sh
+           regexp: "#BLANKLINE"
+           replace: '\n'
+       - name: Running change_l33t.sh
+         become: yes
+         shell: |
+            cd /home/ubuntu/ansible-assignments-scripts
+            chmod 755 change_l33t.sh
+            ./change_l33t.sh > output.txt
+      rescue:
+        - debug: msg="l33t.com appears to be down. Try again later."
+      always:
+        - debug: msg="Attempt completed."

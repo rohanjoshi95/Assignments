@@ -1,0 +1,2 @@
+[workstationhosts]
+35.154.234.44

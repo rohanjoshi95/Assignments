@@ -1,0 +1,79 @@
+We have to set up automation to pull down a data file, from a notoriously unreliable third-party system, for integration purposes. Create a playbook that attempts to pull down http://apps.l33t.com/transaction_list to localhost. The playbook should gracefully handle the site being down by outputting the message "l33t.com appears to be down. Try again later." to stdout. If the task succeeds, the playbook should write "File downloaded." to stdout. No matter if the playbook errors or not, it should always output "Attempt completed." to stdout.
+
+If the report is collected, the playbook should write and edit the file to replace all occurrences of #BLANKLINE with a line break \n.
+
+Tasks list summary:
+
+1. Create a playbook, /home/ansible/report.yml.
+2. Configure the playbook to download http://apps.l33t.com/transaction_list to /home/ansible/transaction_list on localhost 3. and output "File downloaded." to stdout.
+4. Configure the playbook to handle connection failure by outputting "l33t.com appears to be down. Try again later." to stdout.
+5. Configure the playbook to output "Attempt Completed" to stdout, whether it was successful or not.
+6. Configure the playbook to replace all instances of #BLANKLINE with the line break character \n.
+7. Run the playbook using the default inventory to verify whether things work or not.
+
+
+Important notes:
+Create 2 servers, 1 control and another as node
+Install Ansible on the control node.
+Create user ansible on all servers, with appropriate shared keys for access to the necessary servers from the control node.
+apps.l33t.com is unavailable by default.
+We may force a state change by running change_l33t.sh available at https://github.com/satyensingh/ansible-assignments-scripts.git.
+
+
+Answers -->>
+
+-
+  name: Automation to pull down a data file
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: File Downloading
+      block:
+       - git:
+           repo: https://github.com/satyensingh/ansible-assignments-scripts.git
+           dest: /home/ubuntu/ansible-assignments-scripts
+       - debug: msg="File downloaded"
+       - replace:
+           path: /home/ubuntu/ansible-assignments-scripts/change_l33t.sh
+           regexp: "#BLANKLINE"
+           replace: '\n'
+       - name: Running change_l33t.sh
+         become: yes
+         shell: |
+            cd /home/ubuntu/ansible-assignments-scripts
+            chmod 755 change_l33t.sh
+            ./change_l33t.sh > output.txt
+      rescue:
+        - debug: msg="l33t.com appears to be down. Try again later."
+      always:
+        - debug: msg="Attempt completed."
+
+
+$ ansible-playbook report.yml -i inventory.txt
+
+PLAY [Automation to pull down a data file] ******************************************************************************************************************
+
+TASK [Gathering Facts] **************************************************************************************************************************************
+ok: [localhost]
+
+TASK [git] **************************************************************************************************************************************************
+changed: [localhost]
+
+TASK [debug] ************************************************************************************************************************************************
+ok: [localhost] => {
+    "msg": "File downloaded"
+}
+
+TASK [replace] **********************************************************************************************************************************************
+ok: [localhost]
+
+TASK [Running change_l33t.sh] *******************************************************************************************************************************
+changed: [localhost]
+
+TASK [debug] ************************************************************************************************************************************************
+ok: [localhost] => {
+    "msg": "Attempt completed"
+}
+
+PLAY RECAP **************************************************************************************************************************************************
+localhost                  : ok=6    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0

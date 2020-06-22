@@ -1,0 +1,2 @@
+[Web]
+node1 ansible_host=35.154.234.44

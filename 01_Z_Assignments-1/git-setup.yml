@@ -1,0 +1,13 @@
+-
+  name: Ping and Install Git
+  hosts: workstationhosts
+  become: true
+  tasks:
+    - name: Ping test
+      ping:
+
+    - name: Install Git
+      apt:
+        name: git
+        state: present
+

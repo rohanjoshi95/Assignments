@@ -1,0 +1,90 @@
+Learning Objectives:-
+Install Ansible on the control host.
+Create an `ansible` user on both the control host and workstation host being sure to set a password you can remember.
+Configure a pre-shared key for Ansible that allows the user to log in from `control` to `workstation` without a password.
+Configure the Ansible user on the workstation host so that Ansible may sudo without a password.
+Create a simple inventory in `/home/ansible/inventory` consisting of only the `workstation` host.
+Write an Ansible playbook in `/home/ansible/git-setup.yml` on the control node that installs `git` on `workstation` then execute the playbook.
+
+
+Additional Information:-
+You have been tasked with putting together a presentation to demonstrate how Ansible may be used to install software on remote hosts automatically. Before the demo, you will need to configure your test systems. You have been provided two hosts called control and workstation(Please create 2 Unix/Linux machine for the same). You will need to configure the ansible user on workstation to have sudo access without a password to the automated software installed via Ansible. You must also configure the control host as your Ansible control server by installing Ansible on it as well as configuring the Ansible user with a pre-shared key to login to the workstation host as the ansible user.
+
+Once the basic configuration is complete, you will need to create a simple inventory in /home/ansible/inventory on the control server containing the workstation host. Afterward, you will write a simple playbook in /home/ansbile/git-setup.yml on the control host that installs git on the workstation host. You will need to make sure the playbook works by running it from the control server.
+
+
+Summary tasks list:-
+
+Install Ansible on the control host.
+
+Create an ansible user on both the control host and workstation host.
+
+Configure a pre-shared key for Ansible that allows the user to log in from control to workstation without a password.
+
+Configure the Ansible user on the workstation host so that Ansible may sudo without a password.
+
+Create a simple inventory in /home/ansible/inventory consisting of only the workstation host.
+
+Write and execute an Ansible playbook in /home/ansible/git-setup.yml on the control node that installs git on the workstation host.
+
+
+Answers -->>
+
+Installation
+
+$ sudo apt update
+$ sudo apt install software-properties-common
+$ sudo apt-add-repository --yes --update ppa:ansible/ansible
+$ sudo apt install ansible
+
+Ansible Users --
+useradd -m -s /bin/bash ansible
+passwd ansible
+
+To create key - 
+ssh-keygen -t rsa
+
+copy ssh key to workstation host
+ssh-copy-id -i ~/.ssh/id_rsa.pub 35.154.234.44
+
+$ cat inventory.txt
+[workstationhosts]
+35.154.234.44
+
+$ cat git-setup.yml
+-
+  name: Ping and Install Git
+  hosts: workstationhosts
+  become: true
+  tasks:
+    - name: Ping test
+      ping:
+
+    - name: Install Git
+      apt:
+        name: git
+        state: present
+
+$ ansible-playbook git-setup.yml -i inventory.txt
+
+PLAY [Ping and Install Git] *********************************************************************************************************************************
+
+TASK [Gathering Facts] **************************************************************************************************************************************
+ok: [35.154.234.44]
+
+TASK [Ping test] ********************************************************************************************************************************************
+ok: [35.154.234.44]
+
+TASK [Install Git] ******************************************************************************************************************************************
+ok: [35.154.234.44]
+
+PLAY RECAP **************************************************************************************************************************************************
+35.154.234.44              : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+
+
+
+
+
+
+
